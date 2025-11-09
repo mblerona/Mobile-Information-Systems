@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.lab1_exams_management"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
