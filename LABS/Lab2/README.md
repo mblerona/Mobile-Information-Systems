@@ -1,16 +1,38 @@
-# lab2_recipe_app
+# ️ Flutter Meals App – TheMealDB API
 
-A new Flutter project.
+A simple Flutter application that displays recipe categories, meals by category, and full meal details using **TheMealDB** API.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+##  Features
 
-A few resources to get you started if this is your first Flutter project:
+### **Categories Screen**
+- Loads meal categories from `categories.php`
+- Shows image, name, and description
+- Search bar for filtering
+- Random recipe button (`random.php`)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### **Foods By Category Screen**
+- Loads meals from `filter.php?c={category}`
+- Grid layout (image + name)
+- Local search + optional API search (`search.php?s={query}`)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### **Food Details Screen**
+- Loads detailed recipe from `lookup.php?i={id}`
+- Displays:
+    - Image
+    - Name
+    - Ingredients
+    - Instructions
+    - YouTube link (if available)
+
+---
+
+
+##  API Endpoints Used
+
+- `categories.php`
+- `filter.php?c={category}`
+- `search.php?s={query}`
+- `lookup.php?i={id}`
+- `random.php`
