@@ -7,6 +7,9 @@ import '../widgets/category_card.dart';
 import 'food_details_screen.dart';
 import 'food_category_screen.dart';
 
+
+const Color screenBg = Color(0xFF803636);
+
 class CategoriesScreen extends StatefulWidget {
   final String title;
 
@@ -45,9 +48,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       setState(() {
         _isLoading = false;
       });
-      // simple error message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load ')),
+        const SnackBar(content: Text('Failed to load')),
       );
     }
   }
@@ -136,51 +138,56 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-
-          Padding(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search categories...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+      body: Container(
+        color: screenBg,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search categories...',
+                  hintStyle: const TextStyle(color: Colors.black54),
+                  prefixIcon: const Icon(Icons.search, color: Colors.black),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
+                onChanged: _filterCategories,
               ),
-              onChanged: _filterCategories,
             ),
-          ),
-
-          Expanded(
-            child: _filteredCategories.isEmpty && _searchQuery.isNotEmpty
-                ? const Center(
-              child: Text(
-                'No categories found',
-                style: TextStyle(color: Colors.grey),
+            Expanded(
+              child: _filteredCategories.isEmpty &&
+                  _searchQuery.isNotEmpty
+                  ? const Center(
+                child: Text(
+                  'No categories found',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              )
+                  : ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                itemCount: _filteredCategories.length,
+                itemBuilder: (context, index) {
+                  final category = _filteredCategories[index];
+                  return CategoryCard(
+                    category: category,
+                    onTap: () => _openCategory(category),
+                  );
+                },
               ),
-            )
-                : ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 4,
-              ),
-              itemCount: _filteredCategories.length,
-              itemBuilder: (context, index) {
-                final category = _filteredCategories[index];
-                return CategoryCard(
-                  category: category,
-                  onTap: () => _openCategory(category),
-                );
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

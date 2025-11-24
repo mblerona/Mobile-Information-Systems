@@ -6,6 +6,8 @@ import '../services/api_service.dart';
 import '../widgets/food_grid_item.dart';
 import 'food_details_screen.dart';
 
+const Color screenBg = Color(0xFF803636);
+
 class FoodsByCategoryScreen extends StatefulWidget {
   final String categoryName;
 
@@ -48,7 +50,7 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load')),
+        const SnackBar(content: Text('Failed to load foods')),
       );
     }
   }
@@ -67,7 +69,6 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
     });
   }
 
-
   Future<void> _searchFoodsInApi() async {
     if (_searchQuery.trim().isEmpty) return;
 
@@ -77,7 +78,6 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
 
     try {
       final results = await _apiService.searchFood(_searchQuery);
-
 
       final filtered = results
           .where((food) =>
@@ -91,7 +91,7 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
 
       if (filtered.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Couldnt find any foods')),
+          const SnackBar(content: Text('No foods found in API')),
         );
       }
     } catch (e) {
@@ -99,7 +99,7 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         _isSearchingApi = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Couldnt search')),
+        const SnackBar(content: Text('API search failed')),
       );
     }
   }
@@ -137,80 +137,77 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.categoryName),
+        backgroundColor: const Color(0xFFFEF8F5),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          // Search row
-          Padding(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search foods...',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+      body: Container(
+        color: screenBg,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+          children: [
+
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search foods...',
+                        hintStyle:
+                        const TextStyle(color: Colors.black54),
+                        prefixIcon: const Icon(Icons.search,
+                            color: Colors.black),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
+                      onChanged: _filterFoodsLocally,
                     ),
-                    onChanged: _filterFoodsLocally,
                   ),
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed:
-                  _isSearchingApi ? null : _searchFoodsInApi,
-                  child: _isSearchingApi
-                      ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  )
-                      : const Text('Search API'),
-                ),
-              ],
-            ),
-          ),
 
-
-          Expanded(
-            child: _filteredFoods.isEmpty
-                ? const Center(
-              child: Text(
-                'No foods found',
-                style: TextStyle(color: Colors.grey),
-              ),
-            )
-                : Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12),
-              child: GridView.builder(
-                gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 0.8,
-                ),
-                itemCount: _filteredFoods.length,
-                itemBuilder: (context, index) {
-                  final food = _filteredFoods[index];
-                  return FoodGridItem(
-                    food: food,
-                    onTap: () => _openFoodDetails(food),
-                  );
-                },
+                ],
               ),
             ),
-          ),
-        ],
+
+
+            Expanded(
+              child: _filteredFoods.isEmpty
+                  ? const Center(
+                child: Text(
+                  'No foods found',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              )
+                  : Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12),
+                child: GridView.builder(
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.95,
+                  ),
+                  itemCount: _filteredFoods.length,
+                  itemBuilder: (context, index) {
+                    final food = _filteredFoods[index];
+                    return FoodGridItem(
+                      food: food,
+                      onTap: () => _openFoodDetails(food),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
