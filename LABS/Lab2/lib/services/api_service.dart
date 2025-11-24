@@ -6,6 +6,7 @@ import '../models/food_model.dart';
 import '../models/food_details_model.dart';
 
 class ApiService {
+
   static const String _baseUrl = 'https://www.themealdb.com/api/json/v1/1';
 
 
@@ -27,7 +28,11 @@ class ApiService {
   }
 
 
-  /// Endpoint: filter.php?c={category}
+
+
+
+
+
   Future<List<Food>> getFoodByCategory(String categoryName) async {
     final response = await http.get(
       Uri.parse(
@@ -48,7 +53,6 @@ class ApiService {
   }
 
 
-  /// Endpoint: search.php?s={query}
   Future<List<Food>> searchFood(String query) async {
     if (query.trim().isEmpty) return [];
 
@@ -62,9 +66,7 @@ class ApiService {
       final data = json.decode(response.body);
       final List? mealsJson = data['meals'];
 
-      if (mealsJson == null) {
-        return [];
-      }
+      if (mealsJson == null) return [];
 
       return mealsJson
           .map((item) => Food.fromJson(item))
@@ -75,7 +77,6 @@ class ApiService {
   }
 
 
-  /// Endpoint: lookup.php?i={id}
   Future<FoodDetails?> getFoodDetails(String id) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/lookup.php?i=$id'),
@@ -94,7 +95,6 @@ class ApiService {
   }
 
 
-  /// Endpoint: random.php
   Future<FoodDetails?> getRandomFood() async {
     final response = await http.get(
       Uri.parse('$_baseUrl/random.php'),

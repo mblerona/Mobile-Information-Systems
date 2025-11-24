@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/food_model.dart';
 
-
 const Color cardBg = Color(0xFFF6FAFA);
 
 class FoodGridItem extends StatelessWidget {
@@ -33,20 +32,20 @@ class FoodGridItem extends StatelessWidget {
         child: Column(
           children: [
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 6),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: AspectRatio(
-                  aspectRatio: 3 / 2,
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 6),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
                   child: Image.network(
                     food.image,
                     fit: BoxFit.cover,
+                    width: double.infinity,
                   ),
                 ),
               ),
             ),
-
 
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
@@ -67,3 +66,4 @@ class FoodGridItem extends StatelessWidget {
     );
   }
 }
+
