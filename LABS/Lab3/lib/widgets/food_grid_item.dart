@@ -6,11 +6,15 @@ const Color cardBg = Color(0xFFF6FAFA);
 class FoodGridItem extends StatelessWidget {
   final Food food;
   final VoidCallback onTap;
+  final bool isFavorite;
+  final VoidCallback onTapFavorite;
 
   const FoodGridItem({
     super.key,
     required this.food,
     required this.onTap,
+    required this.isFavorite,
+    required this.onTapFavorite,
   });
 
   @override
@@ -20,44 +24,65 @@ class FoodGridItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.20),
+              blurRadius: 6,
               offset: const Offset(2, 4),
             ),
           ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
 
 
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 6),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.network(
-                    food.image,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: AspectRatio(
+                aspectRatio: 4/3,
+                child: Image.network(
+                  food.image,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
 
+
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
-              child: Text(
-                food.name.toUpperCase(),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+              padding: const EdgeInsets.fromLTRB(10, 12, 10, 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      food.name.toUpperCase(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15, //
+                        fontWeight: FontWeight.w700,
+
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onTapFavorite,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: isFavorite ? Colors.red : Colors.grey,
+                      size: 20,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -66,4 +91,3 @@ class FoodGridItem extends StatelessWidget {
     );
   }
 }
-

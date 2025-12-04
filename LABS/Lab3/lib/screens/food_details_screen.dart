@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/food_details_model.dart';
-
+import 'favorite_screen.dart';
 
 const Color screenBg = Color(0xFF803636);
 const Color cardBg = Color(0xFFF6FAFA);
@@ -15,27 +15,23 @@ class FoodDetailsScreen extends StatelessWidget {
     final food =
     ModalRoute.of(context)!.settings.arguments as FoodDetails;
 
-
-
-
     final rawLines = food.instructions
         .split(RegExp(r'\r?\n'))
         .map((l) => l.trim())
         .where((l) => l.isNotEmpty)
         .toList();
 
-
     List<String> steps = [];
 
     for (int i = 0; i < rawLines.length; i++) {
       final line = rawLines[i];
 
-
-      final isStepHeader = RegExp(r'^step\s*\d+[:.]?$', caseSensitive: false)
-          .hasMatch(line);
+      final isStepHeader = RegExp(
+        r'^step\s*\d+[:.]?$',
+        caseSensitive: false,
+      ).hasMatch(line);
 
       if (isStepHeader) {
-
         if (i + 1 < rawLines.length) {
           steps.add(rawLines[i + 1]);
           i++;
@@ -47,18 +43,41 @@ class FoodDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFFEF8F5),
+        backgroundColor: const Color(0xFFFEF8F5),
         title: Text(
           food.name,
           overflow: TextOverflow.ellipsis,
         ),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const FavoriteScreen(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.favorite,
+              color: Color(0xFF4A3A32),
+            ),
+            label: const Text(
+              'View Favorites',
+              style: TextStyle(
+                color: Color(0xFF4A3A32),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
       backgroundColor: screenBg,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-
+            // Image card
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -87,7 +106,7 @@ class FoodDetailsScreen extends StatelessWidget {
               ),
             ),
 
-
+            // Ingredients card
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -106,7 +125,6 @@ class FoodDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Center(
                       child: Text(
                         food.name.toUpperCase(),
@@ -118,7 +136,6 @@ class FoodDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-
                     const Text(
                       'Ingredients',
                       style: TextStyle(
@@ -127,7 +144,6 @@ class FoodDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-
                     ...food.ingredients.map(
                           (ingredient) => Text(
                         '• ${ingredient.name} - ${ingredient.measure}',
@@ -139,7 +155,7 @@ class FoodDetailsScreen extends StatelessWidget {
               ),
             ),
 
-
+            // Instructions card
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -166,8 +182,6 @@ class FoodDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-
-
                     if (steps.isEmpty)
                       Text(
                         food.instructions,
@@ -213,7 +227,7 @@ class FoodDetailsScreen extends StatelessWidget {
               ),
             ),
 
-
+            // YouTube link card
             if (food.youtubeUrl != null &&
                 food.youtubeUrl!.trim().isNotEmpty)
               Container(
@@ -228,8 +242,10 @@ class FoodDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                padding:
-                const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
