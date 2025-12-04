@@ -4,7 +4,9 @@ import '../models/food_model.dart';
 import '../models/food_details_model.dart';
 import '../services/api_service.dart';
 import '../widgets/food_grid_item.dart';
+import 'favorite_screen.dart';
 import 'food_details_screen.dart';
+import '../services/favorite_service.dart';
 
 const Color screenBg = Color(0xFF803636);
 
@@ -30,6 +32,8 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
   bool _isLoading = true;
   bool _isSearchingApi = false;
   String _searchQuery = '';
+
+
 
   @override
   void initState() {
@@ -62,8 +66,9 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         _filteredFoods = _foods;
       } else {
         _filteredFoods = _foods
-            .where((food) =>
-            food.name.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (food) => food.name.toLowerCase().contains(query.toLowerCase()),
+        )
             .toList();
       }
     });
@@ -80,8 +85,10 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
       final results = await _apiService.searchFood(_searchQuery);
 
       final filtered = results
-          .where((food) =>
-      food.category == null || food.category == widget.categoryName)
+          .where(
+            (food) =>
+        food.category == null || food.category == widget.categoryName,
+      )
           .toList();
 
       setState(() {
@@ -106,8 +113,7 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
 
   Future<void> _openFoodDetails(Food food) async {
     try {
-      final FoodDetails? details =
-      await _apiService.getFoodDetails(food.id);
+      final FoodDetails? details = await _apiService.getFoodDetails(food.id);
 
       if (!mounted) return;
 
@@ -138,6 +144,29 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
       appBar: AppBar(
         title: Text(widget.categoryName),
         backgroundColor: const Color(0xFFFEF8F5),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FavoriteScreen()),
+              ).then((_) {
+                setState(() {}); // refresh after coming back
+              });
+            },
+            icon: const Icon(
+              Icons.favorite,
+              color: Color(0xFF4A3A32),
+            ),
+            label: const Text(
+              'View Favorites',
+              style: TextStyle(
+                color: Color(0xFF4A3A32),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         color: screenBg,
@@ -145,10 +174,12 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
-
+            // Search bar
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 12, vertical: 8),
+                horizontal: 12,
+                vertical: 8,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -158,8 +189,10 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
                         hintText: 'Search foods...',
                         hintStyle:
                         const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.search,
-                            color: Colors.black),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.black,
+                        ),
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
@@ -170,12 +203,11 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
                       onChanged: _filterFoodsLocally,
                     ),
                   ),
-
                 ],
               ),
             ),
 
-
+            // Grid of foods
             Expanded(
               child: _filteredFoods.isEmpty
                   ? const Center(
@@ -185,22 +217,31 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
                 ),
               )
                   : Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12),
                 child: GridView.builder(
                   gridDelegate:
                   const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.95,
+                    childAspectRatio: 0.97,
                   ),
                   itemCount: _filteredFoods.length,
                   itemBuilder: (context, index) {
                     final food = _filteredFoods[index];
+                    final isFavorite =
+                    FavoriteService.isFavorite(food);
+
                     return FoodGridItem(
                       food: food,
                       onTap: () => _openFoodDetails(food),
+                      isFavorite: isFavorite,
+                      onTapFavorite: () {
+                        setState(() {
+                          FavoriteService.toggleFavorite(food);
+                        });
+                      },
                     );
                   },
                 ),

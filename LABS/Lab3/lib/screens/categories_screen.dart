@@ -4,9 +4,9 @@ import '../models/category_model.dart';
 import '../models/food_details_model.dart';
 import '../services/api_service.dart';
 import '../widgets/category_card.dart';
+import 'favorite_screen.dart';
 import 'food_details_screen.dart';
 import 'food_category_screen.dart';
-
 
 const Color screenBg = Color(0xFF803636);
 
@@ -61,8 +61,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         _filteredCategories = _categories;
       } else {
         _filteredCategories = _categories
-            .where((category) =>
-            category.name.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (category) =>
+              category.name.toLowerCase().contains(query.toLowerCase()),
+        )
             .toList();
       }
     });
@@ -124,17 +126,29 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: const Color(0xFFFEF8F5),
         actions: [
-          IconButton(
-            onPressed: _isRandomLoading ? null : _openRandomFood,
-            icon: _isRandomLoading
-                ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-                : const Icon(Icons.shuffle),
-            tooltip: 'Random recipe',
+          // View Favorites button (stays in AppBar)
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FavoriteScreen()),
+              ).then((_) {
+                setState(() {}); // refresh after coming back
+              });
+            },
+            icon: const Icon(
+              Icons.favorite,
+              color: Color(0xFF4A3A32),
+            ),
+            label: const Text(
+              'View Favorites',
+              style: TextStyle(
+                color: Color(0xFF4A3A32),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -144,14 +158,19 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
+            // Search bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search categories...',
                   hintStyle: const TextStyle(color: Colors.black54),
-                  prefixIcon: const Icon(Icons.search, color: Colors.black),
+                  prefixIcon:
+                  const Icon(Icons.search, color: Colors.black),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -162,6 +181,48 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 onChanged: _filterCategories,
               ),
             ),
+
+            // Random of the day button (full width row)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 4,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed:
+                  _isRandomLoading ? null : _openRandomFood,
+                  icon: _isRandomLoading
+                      ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : const Icon(Icons.auto_awesome),
+                  label: const Text(
+                    'View Random Recipe of the day',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFEF8F5),
+                    foregroundColor: const Color(0xFF4A3A32),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Categories list
             Expanded(
               child: _filteredCategories.isEmpty &&
                   _searchQuery.isNotEmpty
