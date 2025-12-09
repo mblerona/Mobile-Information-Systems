@@ -64,7 +64,7 @@ class FoodGridItem extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 15, //
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
 
                       ),

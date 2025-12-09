@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lab3_recipe_app/screens/profile.dart';
 
 import '../models/food_model.dart';
 import '../models/food_details_model.dart';
@@ -33,8 +34,6 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
   bool _isSearchingApi = false;
   String _searchQuery = '';
 
-
-
   @override
   void initState() {
     super.initState();
@@ -54,7 +53,12 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load foods')),
+        const SnackBar(
+          content: Text(
+            'Failed to load foods',
+            style: TextStyle(fontSize: 11),
+          ),
+        ),
       );
     }
   }
@@ -67,8 +71,7 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
       } else {
         _filteredFoods = _foods
             .where(
-              (food) => food.name.toLowerCase().contains(query.toLowerCase()),
-        )
+                (food) => food.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -85,10 +88,8 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
       final results = await _apiService.searchFood(_searchQuery);
 
       final filtered = results
-          .where(
-            (food) =>
-        food.category == null || food.category == widget.categoryName,
-      )
+          .where((food) =>
+      food.category == null || food.category == widget.categoryName)
           .toList();
 
       setState(() {
@@ -98,7 +99,12 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
 
       if (filtered.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No foods found in API')),
+          const SnackBar(
+            content: Text(
+              'No foods found in API',
+              style: TextStyle(fontSize: 11),
+            ),
+          ),
         );
       }
     } catch (e) {
@@ -106,7 +112,12 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         _isSearchingApi = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('API search failed')),
+        const SnackBar(
+          content: Text(
+            'API search failed',
+            style: TextStyle(fontSize: 11),
+          ),
+        ),
       );
     }
   }
@@ -127,13 +138,23 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No food details found')),
+          const SnackBar(
+            content: Text(
+              'No food details found',
+              style: TextStyle(fontSize: 11),
+            ),
+          ),
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to load details')),
+        const SnackBar(
+          content: Text(
+            'Failed to load details',
+            style: TextStyle(fontSize: 11),
+          ),
+        ),
       );
     }
   }
@@ -142,28 +163,61 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.categoryName),
+        title: Text(
+          widget.categoryName,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
         backgroundColor: const Color(0xFFFEF8F5),
         actions: [
+          // View Favorites button
           TextButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const FavoriteScreen()),
-              ).then((_) {
-                setState(() {}); // refresh after coming back
-              });
+              );
             },
             icon: const Icon(
               Icons.favorite,
               color: Color(0xFF4A3A32),
+              size: 14,
             ),
             label: const Text(
               'View Favorites',
               style: TextStyle(
                 color: Color(0xFF4A3A32),
                 fontWeight: FontWeight.w600,
+                fontSize: 11,
               ),
+            ),
+          ),
+
+          // Separator |
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              '|',
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+
+          // Profile icon
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+              print("Profile tapped");
+            },
+            icon: const Icon(
+              Icons.person,
+              color: Color(0xFF4A3A32),
+              size: 18,
             ),
           ),
         ],
@@ -174,7 +228,6 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [
-            // Search bar
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 12,
@@ -185,13 +238,15 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
                   Expanded(
                     child: TextField(
                       controller: _searchController,
+                      style: const TextStyle(fontSize: 11),
                       decoration: InputDecoration(
                         hintText: 'Search foods...',
-                        hintStyle:
-                        const TextStyle(color: Colors.black54),
+                        hintStyle: const TextStyle(
+                            color: Colors.black54, fontSize: 11),
                         prefixIcon: const Icon(
                           Icons.search,
                           color: Colors.black,
+                          size: 16,
                         ),
                         filled: true,
                         fillColor: Colors.white,
@@ -207,25 +262,25 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
               ),
             ),
 
-            // Grid of foods
             Expanded(
               child: _filteredFoods.isEmpty
                   ? const Center(
                 child: Text(
                   'No foods found',
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(
+                      color: Colors.white70, fontSize: 11),
                 ),
               )
                   : Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 12),
+                const EdgeInsets.symmetric(horizontal: 10),
                 child: GridView.builder(
                   gridDelegate:
                   const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.97,
+                    childAspectRatio: 0.95,
                   ),
                   itemCount: _filteredFoods.length,
                   itemBuilder: (context, index) {

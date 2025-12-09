@@ -64,7 +64,7 @@ class CategoryCard extends StatelessWidget {
                     Text(
                       category.name.toUpperCase(),
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -77,7 +77,7 @@ class CategoryCard extends StatelessWidget {
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 10,
                         height: 1.3,
                       ),
                     ),

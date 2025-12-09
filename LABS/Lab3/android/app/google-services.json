@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "335210846350",
+    "project_id": "mis-lab3-recipe-app",
+    "storage_bucket": "mis-lab3-recipe-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:335210846350:android:91cac51f77c2befe8511df",
+        "android_client_info": {
+          "package_name": "com.example.lab2_recipe_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsM1O7aVqn-0nqPXh6cZLfSC8iBERa8f0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

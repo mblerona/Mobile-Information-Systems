@@ -1,4 +1,4 @@
-package com.example.lab3_recipe_app
+package com.example.lab2_recipe_app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -31,7 +31,12 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to load details")),
+        const SnackBar(
+          content: Text(
+            "Failed to load details",
+            style: TextStyle(fontSize: 11),
+          ),
+        ),
       );
     }
   }
@@ -42,13 +47,17 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Favorite Recipes"),
+        title: const Text(
+          "Favorite Recipes",
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFFFEF8F5),
       ),
       body: favorites.isEmpty
           ? const Center(
         child: Text(
           "No favorites yet!",
-          style: TextStyle(fontSize: 18, color: Colors.grey),
+          style: TextStyle(fontSize: 11, color: Colors.grey),
         ),
       )
           : GridView.builder(

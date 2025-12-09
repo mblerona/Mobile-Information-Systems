@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lab3_recipe_app/screens/profile.dart';
 
 import '../models/food_details_model.dart';
 import 'favorite_screen.dart';
@@ -12,8 +13,7 @@ class FoodDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final food =
-    ModalRoute.of(context)!.settings.arguments as FoodDetails;
+    final food = ModalRoute.of(context)!.settings.arguments as FoodDetails;
 
     final rawLines = food.instructions
         .split(RegExp(r'\r?\n'))
@@ -43,31 +43,66 @@ class FoodDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+
         backgroundColor: const Color(0xFFFEF8F5),
         title: Text(
           food.name,
           overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
+          // View Favorites button
           TextButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const FavoriteScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const FavoriteScreen()),
               );
             },
             icon: const Icon(
               Icons.favorite,
               color: Color(0xFF4A3A32),
+              size: 14,
             ),
             label: const Text(
               'View Favorites',
               style: TextStyle(
                 color: Color(0xFF4A3A32),
                 fontWeight: FontWeight.w600,
+                fontSize: 11,
               ),
+            ),
+          ),
+
+          // Separator |
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              '|',
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+
+          // Profile icon
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+              print("Profile tapped");
+            },
+            icon: const Icon(
+              Icons.person,
+              color: Color(0xFF4A3A32),
+              size: 18,
             ),
           ),
         ],
@@ -77,7 +112,7 @@ class FoodDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            // Image card
+            // IMAGE CARD
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -106,7 +141,7 @@ class FoodDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            // Ingredients card
+            // INGREDIENTS CARD
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -130,7 +165,7 @@ class FoodDetailsScreen extends StatelessWidget {
                         food.name.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -139,7 +174,7 @@ class FoodDetailsScreen extends StatelessWidget {
                     const Text(
                       'Ingredients',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -147,7 +182,7 @@ class FoodDetailsScreen extends StatelessWidget {
                     ...food.ingredients.map(
                           (ingredient) => Text(
                         '• ${ingredient.name} - ${ingredient.measure}',
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 11),
                       ),
                     ),
                   ],
@@ -155,7 +190,7 @@ class FoodDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            // Instructions card
+            // INSTRUCTIONS CARD
             Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
@@ -177,7 +212,7 @@ class FoodDetailsScreen extends StatelessWidget {
                     const Text(
                       'Instructions',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -185,7 +220,7 @@ class FoodDetailsScreen extends StatelessWidget {
                     if (steps.isEmpty)
                       Text(
                         food.instructions,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 11),
                       )
                     else
                       Column(
@@ -209,13 +244,13 @@ class FoodDetailsScreen extends StatelessWidget {
                                     'Step ${i + 1}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: 13,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     steps[i],
-                                    style: const TextStyle(fontSize: 14),
+                                    style: const TextStyle(fontSize: 11),
                                   ),
                                 ],
                               ),
@@ -227,10 +262,12 @@ class FoodDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            // YouTube link card
-            if (food.youtubeUrl != null &&
-                food.youtubeUrl!.trim().isNotEmpty)
+            // YOUTUBE LINK CARD
+            // YOUTUBE LINK CARD
+            if (food.youtubeUrl != null && food.youtubeUrl!.trim().isNotEmpty)
               Container(
+                width: double.infinity,
+
                 decoration: BoxDecoration(
                   color: cardBg,
                   borderRadius: BorderRadius.circular(25),
@@ -246,23 +283,32 @@ class FoodDetailsScreen extends StatelessWidget {
                   vertical: 12,
                   horizontal: 16,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+
                   children: [
+
                     const Text(
-                      'YouTube link',
+
+                      'YouTube link:',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    SelectableText(
-                      food.youtubeUrl!,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
+                    const SizedBox(width: 8),
+
+
+                    Expanded(
+                      child: SelectableText(
+                        food.youtubeUrl!,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                        maxLines: 1,
+                        scrollPhysics: ClampingScrollPhysics(),
                       ),
                     ),
                   ],
