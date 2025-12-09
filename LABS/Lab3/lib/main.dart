@@ -15,42 +15,71 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  print('📩 FCM message received in BACKGROUND: ${message.messageId}');
 
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
+  // Initialize local notifications
   await NotificationService.init();
 
+  // 🔹 Ask for notification permission (needed on iOS and Android 13+)
+  final settings = await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    sound: true,
+  );
+  print('🔔 Notification permission: ${settings.authorizationStatus}');
 
+  // 🔹 Try to get the FCM token
+  try {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    print('🔥 FCM Token: $fcmToken');
+  } catch (e) {
+    print('⚠️ Error while getting FCM token: $e');
+  }
+
+  // Background handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-
+  // Foreground notification behavior (iOS)
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
     sound: true,
   );
 
+  // Foreground messages listener
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   final notification = message.notification;
+  //   final body = notification?.body ??
+  //       "Tap to open the app and see today's random recipe!";
+  //   NotificationService.showRandomRecipeNotification(body);
+  // });
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('📩 FCM message received in FOREGROUND');
+    print('   ➤ messageId: ${message.messageId}');
+    print('   ➤ title: ${message.notification?.title}');
+    print('   ➤ body: ${message.notification?.body}');
+
     final notification = message.notification;
     final body = notification?.body ??
         "Tap to open the app and see today's random recipe!";
+
     NotificationService.showRandomRecipeNotification(body);
   });
 
-
-
   runApp(const MyApp());
+
+
 }
 
 class MyApp extends StatelessWidget {

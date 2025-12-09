@@ -70,8 +70,8 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         _filteredFoods = _foods;
       } else {
         _filteredFoods = _foods
-            .where(
-                (food) => food.name.toLowerCase().contains(query.toLowerCase()))
+            .where((food) =>
+            food.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -169,7 +169,6 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
         ),
         backgroundColor: const Color(0xFFFEF8F5),
         actions: [
-          // View Favorites button
           TextButton.icon(
             onPressed: () {
               Navigator.push(
@@ -192,7 +191,6 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
             ),
           ),
 
-          // Separator |
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 4),
             child: Text(
@@ -205,14 +203,12 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
             ),
           ),
 
-          // Profile icon
           IconButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ProfilePage()),
               );
-              print("Profile tapped");
             },
             icon: const Icon(
               Icons.person,
@@ -222,87 +218,81 @@ class _FoodsByCategoryScreenState extends State<FoodsByCategoryScreen> {
           ),
         ],
       ),
-      body: Container(
-        color: screenBg,
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      style: const TextStyle(fontSize: 11),
-                      decoration: InputDecoration(
-                        hintText: 'Search foods...',
-                        hintStyle: const TextStyle(
-                            color: Colors.black54, fontSize: 11),
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: Colors.black,
-                          size: 16,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                      onChanged: _filterFoodsLocally,
+
+      // ✅ FIXED: SafeArea + no overflow + proper scrolling
+      body: SafeArea(
+        child: Container(
+          color: screenBg,
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+            children: [
+              // SEARCH BAR
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(fontSize: 11),
+                  decoration: InputDecoration(
+                    hintText: 'Search foods...',
+                    hintStyle: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 11,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Colors.black,
+                      size: 16,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
                     ),
                   ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: _filteredFoods.isEmpty
-                  ? const Center(
-                child: Text(
-                  'No foods found',
-                  style: TextStyle(
-                      color: Colors.white70, fontSize: 11),
+                  onChanged: _filterFoodsLocally,
                 ),
-              )
-                  : Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 10),
-                child: GridView.builder(
-                  gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.95,
+              ),
+
+              // GRID VIEW
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: GridView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.7, // prevent overflow
+                    ),
+                    itemCount: _filteredFoods.length,
+                    itemBuilder: (context, index) {
+                      final food = _filteredFoods[index];
+                      final isFavorite =
+                      FavoriteService.isFavorite(food);
+
+                      return FoodGridItem(
+                        food: food,
+                        onTap: () => _openFoodDetails(food),
+                        isFavorite: isFavorite,
+                        onTapFavorite: () {
+                          setState(() {
+                            FavoriteService.toggleFavorite(food);
+                          });
+                        },
+                      );
+                    },
                   ),
-                  itemCount: _filteredFoods.length,
-                  itemBuilder: (context, index) {
-                    final food = _filteredFoods[index];
-                    final isFavorite =
-                    FavoriteService.isFavorite(food);
-
-                    return FoodGridItem(
-                      food: food,
-                      onTap: () => _openFoodDetails(food),
-                      isFavorite: isFavorite,
-                      onTapFavorite: () {
-                        setState(() {
-                          FavoriteService.toggleFavorite(food);
-                        });
-                      },
-                    );
-                  },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
